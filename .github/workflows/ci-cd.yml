@@ -1,3 +1,5 @@
+# .github/workflows/ci-cd.yml
+
 name: CI/CD
 
 on:
@@ -8,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -31,7 +34,4 @@ jobs:
           docker build -t damiankaio/my-docker-image-d17 ./app
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker push damiankaio/my-docker-image-d17
-
-      - name: Send greeting
-        run: echo "Hello ${{ inputs.name }}"
 
