@@ -1,0 +1,8 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.provision "shell", path: "bootstrap.sh"
+
+  # Agrega esta línea para sincronizar la carpeta "app" de la aplicación con la VM
+  config.vm.synced_folder "./app", "/app"
+  
+end
