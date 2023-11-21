@@ -1,0 +1,38 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Lint Dockerfile
+        run: |
+          docker pull hadolint/hadolint
+          docker run --rm -i hadolint/hadolint < app/Dockerfile
+
+      - name: Analyze Vulnerabilities
+        run: |
+          docker pull aquasec/trivy
+          docker run --rm -v $PWD:/app -w /app aquasec/trivy --exit-code 1 --severity HIGH,CRITICAL
+
+      - name: Security Testing
+        run: |
+          node scripts/security-test.js
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t damiankaio/my-docker-image-d17 ./app
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push damiankaio/my-docker-image-d17
+
+    # Runs a single command using the runners shell
+    - name: Send greeting
+      run: echo "Hello ${{ inputs.name }}"
