@@ -1,4 +1,4 @@
-//scrip de validacion de seguridad
+//scrip de validacion de segurida
 const fs = require("fs");
 const path = require("path");
 
