@@ -1,0 +1,40 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Print Current Directory
+        run: ls -R
+
+      - name: Lint Dockerfile
+        run: |
+          docker pull hadolint/hadolint
+          docker run --rm -i hadolint/hadolint < ./Dockerfile
+
+      # Trivy action
+      #- name: Analyze Vulnerabilities with Trivy
+      #  uses: docker://aquasec/trivy:v0.20.1
+      #  with:
+      #    args: --severity HIGH,CRITICAL /app
+
+      # check de seguridad
+      - name: Security Testing
+        run: python3 /src/security-test.py
+      # ...
+
+      # subir imagen
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t damiankaio/my-docker-image-d17:latest .
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push damiankaio/my-docker-image-d17:latest
