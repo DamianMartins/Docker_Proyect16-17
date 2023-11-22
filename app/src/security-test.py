@@ -43,7 +43,7 @@ if script_tags:
             # Manejar otros errores
             print(f'Error: {e}')
 
-        # Eliminar el archivo temporal
+        # Eliminar el archivo temporal 
         subprocess.run(["rm", temp_script_path])
     else:
         print('El contenido del script no es una cadena')
