@@ -27,11 +27,8 @@ jobs:
       #  with:
       #    args: --severity HIGH,CRITICAL /app
 
-      # check de seguridad
       - name: Security Testing
-        run: |
-          source /home/vagrant/venv/bin/activate
-          python3 /app/src/security-test.py
+        run: python3 ./src/security-test.py
       # ...
 
       # subir imagen

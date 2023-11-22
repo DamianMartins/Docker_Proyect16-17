@@ -1,52 +1,54 @@
-import subprocess
-from bs4 import BeautifulSoup
+import re
 
-# Ruta al archivo index.html
-html_file_path = "/app/index.html"
-
-# Leer el contenido del archivo HTML
+# Archivo HTML
+html_file_path = "./index.html"
 with open(html_file_path, "r") as html_file:
     html_content = html_file.read()
 
-# Utilizar BeautifulSoup para extraer el contenido del script JavaScript
-soup = BeautifulSoup(html_content, "html.parser")
-script_tags = soup.find_all("script")
-
-# Verificar si se encontraron scripts en el HTML
+# Buscar scripts maliciosos en el archivo HTML
+script_tags = re.findall(r'<script[\s\S]*?>[\s\S]*?</script>', html_content)
 if script_tags:
-    script_content = "\n".join(tag.string for tag in script_tags if tag.string)
+    print("Se encontraron scripts maliciosos en el archivo HTML:")
+    for script_tag in script_tags:
+        print(f"- {script_tag}")
 
-    # Verificar si script_content es una cadena antes de intentar escribirlo en el archivo temporal
-    if script_content and isinstance(script_content, str):
-        # Guardar el contenido del script en un archivo temporal
-        temp_script_path = "/tmp/temp_script.js"
-        with open(temp_script_path, "w") as temp_script:
-            temp_script.write(script_content)
+# Buscar referencias a recursos externos sospechosos en el archivo HTML
+external_resources = re.findall(r'src=[\'"]?([^\'" >]+)', html_content)
+if external_resources:
+    print("\nReferencias a recursos externos sospechosos en el archivo HTML:")
+    for resource in external_resources:
+        print(f"- {resource}")
 
-        try:
-            # Ejecutar bandit en el archivo temporal
-            result = subprocess.run(["bandit", "-r", temp_script_path], check=True, capture_output=True, text=True)
-            output = result.stdout
+# Archivo CSS
+css_file_path = "./style.css"
+with open(css_file_path, "r") as css_file:
+    css_content = css_file.read()
 
-            # Verificar si se encontraron vulnerabilidades.
-            if "No issues identified" not in output:
-                print('Encontradas vulnerabilidades en el código JavaScript')
+# Buscar patrones maliciosos en el archivo CSS
+# (Este es un ejemplo básico y puede necesitar ajustes según tus necesidades)
+if "eval(" in css_content:
+    print("\nSe encontró el patrón 'eval(' en el archivo CSS. Esto podría ser una vulnerabilidad.")
 
-                # Imprimir la salida de bandit
-                print(output)
-            else:
-                print('No se encontraron vulnerabilidades en el código JavaScript')
-        except subprocess.CalledProcessError as e:
-            # Manejar errores de bandit
-            print(f'Error al ejecutar bandit: {e.stderr}')
-        except Exception as e:
-            # Manejar otros errores
-            print(f'Error: {e}')
+# Archivo JS
+js_file_path = "./script.js"
+with open(js_file_path, "r") as js_file:
+    js_content = js_file.read()
 
-        # Eliminar el archivo temporal 
-        subprocess.run(["rm", temp_script_path])
-    else:
-        print('El contenido del script no es una cadena')
-else:
-    print('No se encontró un script JavaScript en el archivo HTML')
+# Revisar el código JavaScript en busca de vulnerabilidades conocidas
+# (Este es un ejemplo básico y puede necesitar ajustes según tus necesidades)
+if "alert(" in js_content:
+    print("\nSe encontró el patrón 'alert(' en el archivo JavaScript. Esto podría ser una vulnerabilidad.")
+
+# Archivo nginx.conf
+nginx_conf_path = "./nginx.conf"
+with open(nginx_conf_path, "r") as nginx_conf_file:
+    nginx_conf_content = nginx_conf_file.read()
+
+# Verificar la configuración del servidor en el archivo nginx.conf
+# (Este es un ejemplo básico y puede necesitar ajustes según tus necesidades)
+if "server_tokens off;" not in nginx_conf_content:
+    print("\nLa configuración 'server_tokens off;' no está presente en nginx.conf. Se recomienda desactivar la divulgación de versiones de software.")
+
+# Otras verificaciones específicas según tu configuración y requisitos...
+
 
