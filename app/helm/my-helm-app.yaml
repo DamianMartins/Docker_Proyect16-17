@@ -1,0 +1,22 @@
+# Aplicación Helm en ArgoCD
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-helm-app
+  namespace: default
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: HEAD
+    path: my-helm-chart
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

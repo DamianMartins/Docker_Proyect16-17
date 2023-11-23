@@ -1,0 +1,9 @@
+# configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+data:
+  app.properties: |
+    key1=valor1
+    key2=valor2

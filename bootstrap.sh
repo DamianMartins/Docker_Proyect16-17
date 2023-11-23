@@ -11,7 +11,8 @@ sudo apt install -y ntpdate
 sudo ntpdate -s time.nist.gov
 
 # Obtener la contraseña del archivo server_password.txt
-PASSWORD=$(cat server_password.txt)
+#PASSWORD=$(cat server_password.txt)
+PASSWORD='test'
 # Establecimiento de la contraseña
 echo "vagrant:$PASSWORD" | sudo chpasswd
 echo "Script de aprovisionamiento ejecutado" >> /home/vagrant/provision.log
@@ -40,4 +41,17 @@ sudo usermod -aG docker vagrant
 
 # Activar los cambios
 newgrp docker
+
+#instalar python
+sudo apt install python3
+python3 --version
+
+#Kubernetes Instalacion
+cd /app/
+sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+sudo chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+#instalar Helm
+sudo snap install helm --classic
 

@@ -1,0 +1,44 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: damiankaio/my-docker-image-d17:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: password
+        volumeMounts:
+        - name: my-volume
+          mountPath: /app/data   # Ruta de montaje para datos persistentes
+        - name: my-configmap-volume
+          mountPath: /app/config  # Ruta de montaje para archivos de configuración
+      volumes:
+      - name: my-volume
+        persistentVolumeClaim:
+          claimName: my-pvc
+      - name: my-configmap-volume
+        configMap:
+          name: my-configmap
+

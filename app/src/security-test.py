@@ -49,6 +49,4 @@ with open(nginx_conf_path, "r") as nginx_conf_file:
 if "server_tokens off;" not in nginx_conf_content:
     print("\nLa configuración 'server_tokens off;' no está presente en nginx.conf. Se recomienda desactivar la divulgación de versiones de software.")
 
-# Otras verificaciones específicas según tu configuración y requisitos...
-
-
+# Este scrip se realizo de forma basica para cumplir el desafio 16 y 17, hay que tener en cuenta que existen muchisimas validaciones que pueden agregarse.

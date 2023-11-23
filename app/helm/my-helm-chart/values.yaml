@@ -1,0 +1,17 @@
+replicaCount: 3
+
+image:
+  repository: damiankaio/my-docker-image-d17
+  tag: latest
+
+secret:
+  name: my-secret
+
+volumeMount:
+  path: /app/data
+
+configMap:
+  path: /app/config
+
+persistentVolumeClaim:
+  name: my-pvc

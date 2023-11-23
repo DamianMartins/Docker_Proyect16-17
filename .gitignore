@@ -1,4 +1,4 @@
 # .gitignore
 #contraseñas
 server_password.txt
-/app/src/Python-3.7.12
+/app/src/.github
