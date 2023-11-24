@@ -47,11 +47,37 @@ sudo apt install python3
 python3 --version
 
 #Kubernetes Instalacion
-cd /app/
 sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 sudo chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 
-#instalar Helm
-sudo snap install helm --classic
+#minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+sudo dpkg -i minikube_latest_amd64.deb
 
+
+# Descargar la última versión de Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+# Dar permisos de ejecución al script
+chmod +x get_helm.sh
+# Ejecutar el script para instalar Helm
+./get_helm.sh
+
+#instalar Helm
+#sudo snap install helm --classic
+
+#instalar microk8s
+sudo snap install microk8s --classic
+
+#Instalar Argocd
+# Descargar el binario de ArgoCD
+wget https://github.com/argoproj/argo-cd/releases/download/v2.0.3/argocd-linux-amd64 -O argocd
+
+# Dar permisos de ejecución al binario
+chmod +x argocd
+
+# Mover el binario a un directorio en tu PATH
+sudo mv argocd /usr/local/bin/
+
+# Verificar la instalación
+argocd version

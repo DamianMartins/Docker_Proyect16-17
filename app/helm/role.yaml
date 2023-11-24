@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-app-role
+  namespace: argocd
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "deployments"]  # Agrega los recursos necesarios
+  verbs: ["get", "list", "create", "update", "delete"]  # Agrega los permisos necesarios

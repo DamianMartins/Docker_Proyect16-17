@@ -2,3 +2,4 @@
 #contraseñas
 server_password.txt
 /app/src/.github
+/app/helm/my-helm-chart/
