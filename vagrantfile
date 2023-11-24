@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
 
   # Agrega esta línea para sincronizar la carpeta "app" de la aplicación con la VM
   config.vm.synced_folder "./app", "/app"
-  config.vm.synced_folder "./my-helm-chart", "/my-helm-chart"
+  config.vm.synced_folder "./helm-argo", "/helm-argo"
 
   # Configuración de la memoria
   config.vm.provider "virtualbox" do |vb|
