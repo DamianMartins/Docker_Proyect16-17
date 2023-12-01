@@ -1,5 +1,0 @@
-# Chart.yaml
-apiVersion: v2
-name: my-helm-chart
-description: Mi aplicación Helm
-version: 0.1.0
