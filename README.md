@@ -188,3 +188,137 @@ Nota: Si necesitas actualizar la imagen de Docker, edita deployment.yaml y cambi
 $ kubectl apply -f deployment.yaml
 Kubernetes realizará una actualización sin interrupciones, creando nuevos pods antes de eliminar los antiguos.
 
+
+# Helm y Argocd
+
+Instalación Docker
+
+sudo apt-get update
+sudo apt-get install docker.io
+sudo groupadd docker
+sudo usermod -aG docker vagrant
+# Activar los cambios
+newgrp Docker
+
+
+
+Instalación de Kubernetes:
+ 
+Instalación de Helm:
+Se selecciono la versión 3.13.2 desde la documentación:
+ https://kubernetes.io/es/docs/tasks/tools/included/install-kubectl-linux/   
+ 
+
+Luego se realizaron los pasos de instalación descritos en la documentación.
+https://helm.sh/es/docs/intro/install/   
+
+Instalación de minikube:
+ 
+Se utilizo la documentación oficial:
+
+https://minikube.sigs.k8s.io/docs/start/ 
+
+Instalar Argo:
+
+Se instalo Argocd desde la instalación oficial, se utilizó el binario:
+https://argo-cd.readthedocs.io/en/stable/cli_installation/
+
+Iniciamos nuestro Minikube para contar con un Cluster de K8s en local:
+minikube start
+
+Añadimos el repo de Helm
+helm repo add argo https://argoproj.github.io/argo-helm
+
+Hacemos pull del Chart para descargarlo, poder ver el contenido del Chart e instalarlo.
+helm pull argo/argo-cd --version 5.8.2
+
+Descomprimimos el paquete TGZ del Chart descargado
+tar -zxvf argo-cd-5.8.2.tgz
+
+Nota: este paso creara una carpeta de Argocd con las carpetas y archivos necesarios:
+ 
+
+Conseguimos la clave del usuario admin de Argocd:
+kubectl -n default get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+ 
+Nota: Clave a modo de ilustración, ya que la misma fue modificada por cuestiones de seguridad.
+
+Creamos namespace:
+kubectl create namespace argocd
+kubectl get namespaces
+ 
+
+Iniciamos el servicio de Argocd:
+kubectl port-forward service/argo-cd-argocd-server -n argocd 8080:443
+ 
+
+Accedemos al mismo a través de el localhos:8080 en nuestro navegador:
+ 
+ 
+
+Hacemos login en ArgoCD con la contraseña que hemos obtenido:
+ 
+
+
+Una vez que hemos hecho login satisfactoriamente cambiamos la contraseña generada por una que nos venga mejor, como por ejemplo "test1234" 
+Finalmente accedemos al servidor de Argocd con nuestra nueva contraseña.
+
+Ahora que estamos logeados con el binario de argocd podemos crear el repositorio de código:
+Nota: No se logro realizar con la app en mi repositorio, por lo cual a fines de tiempo, utilice un ejemplo que encontré en internet:
+Repo con “Hola Mundo”:
+argocd repo add https://github.com/DamianMartins/my-helm-repo.git
+
+Repo utilizado de internet:
+argocd repo add https://github.com/TheAutomationRules/argocd.git 
+Creamos un proyecto de pruebas en el que solo se puedan crear aplicaciones en el namespace "desafio17" y con determinado repositorio de código:
+
+ 
+
+argocd proj create desafio17 -d https://kubernetes.default.svc,desafio17 -s https://github.com/TheAutomationRules/argocd.git
+
+ 
+
+Ahora creamos una app(“libro de visitas”), con sincronización automática:
+
+argocd app create desafio17 \
+  --repo https://github.com/TheAutomationRules/argocd.git \ ## repo
+  --revision main --path ./official/examples/helm-guestbook \ ## rama y directorio dentro del repo
+  --dest-server https://kubernetes.default.svc \ ##cluster local
+  --dest-namespace desafio17 \ ## namespace que creamos
+  --sync-policy automated \ ## Aquí le decimos que sincronice de forma automática
+  --project desafio17 ## proyecto que creamos
+
+ 
+
+
+Ya podemos visualizar nuestra APP, en el servicio de Argoscd:
+ 
+
+Ingresamos a verificar la salud del pipeline:
+ 
+ 
+ 
+
+Ahora podemos relanzar la App y sincronizar desde la CLI:
+argocd app sync desafio17
+ 
+Si queremos saber el estatus de la App:
+argocd app get desafio17
+ 
+Ahora para eliminar las Apps:
+argocd app delete desafio17
+ 
+Podemos listar los Charts que tenemos instalados:
+helm list -n argocd
+ 
+
+Desinstalamos todo:
+helm uninstall argo-cd -n argocd
+ 
+Ahora podemos eliminar los Namespaces que hemos creado:
+kubectl delete ns argocd testing
+ 
+Ahora ya podemos detener nuestro Minikube:
+minikube stop
+ 
+
